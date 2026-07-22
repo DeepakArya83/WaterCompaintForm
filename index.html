@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>पानी की शिकायत – Colony Form</title>
+<style>
+  :root {
+    --blue:    #1e6fa5;
+    --dark:    #0a3d62;
+    --light:   #d6ecfa;
+    --red:     #c0392b;
+    --green:   #1a7a4a;
+    --bg:      #f5f9fd;
+    --border:  #cce0f0;
+    --muted:   #5a7a94;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: sans-serif; background: var(--bg); color: #0d2137; }
+
+  .header {
+    background: linear-gradient(135deg, var(--dark), var(--blue));
+    padding: 24px 20px 36px;
+    text-align: center;
+    position: relative;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 24px;
+    background: var(--bg);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .header h1 { font-size: 20px; color: #fff; font-weight: 700; margin-top: 6px; }
+  .header p  { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 4px; }
+
+  .card {
+    margin: 16px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 20px 16px;
+    box-shadow: 0 2px 12px rgba(10,61,98,0.07);
+  }
+
+  .sec-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--blue);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+  .field label .req { color: var(--red); }
+
+  input[type="text"],
+  input[type="tel"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    background: var(--bg);
+    font-family: inherit;
+    color: #0d2137;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a94' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    padding-right: 36px;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(30,111,165,0.12);
+  }
+
+  /* Big toggle chips for problem type */
+  .chip-group { display: flex; flex-direction: column; gap: 10px; }
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    background: var(--bg);
+    transition: all 0.15s;
+  }
+  .chip input[type="checkbox"] { display: none; }
+  .chip .emoji { font-size: 26px; }
+  .chip .txt { font-size: 14px; font-weight: 600; }
+  .chip .sub { font-size: 12px; color: var(--muted); font-weight: 400; }
+  .chip.active { border-color: var(--blue); background: var(--light); }
+  .chip.active .txt { color: var(--dark); }
+
+  /* Severity */
+  .sev-row { display: flex; gap: 8px; }
+  .sev-btn {
+    flex: 1; text-align: center;
+    padding: 12px 4px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--bg);
+    font-size: 22px;
+    transition: all 0.15s;
+  }
+  .sev-btn span { display: block; font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .sev-btn.active { border-color: var(--red); background: #fdecea; }
+
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  .submit-btn {
+    width: 100%; padding: 15px;
+    background: linear-gradient(135deg, var(--dark), var(--blue));
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 16px rgba(10,61,98,0.25);
+  }
+
+  .success-screen {
+    display: none;
+    margin: 16px;
+    background: #e9f7ef;
+    border: 1.5px solid #a8d5b5;
+    border-radius: 16px;
+    padding: 32px 20px;
+    text-align: center;
+  }
+  .success-screen .big { font-size: 52px; margin-bottom: 10px; }
+  .success-screen h2 { font-size: 20px; color: var(--green); margin-bottom: 8px; }
+  .success-screen p { font-size: 13.5px; color: #2c7a4b; line-height: 1.6; }
+
+  .admin-toggle { text-align: center; padding: 10px 16px 16px; }
+  .admin-toggle button {
+    background: none; border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 8px 18px;
+    font-size: 12px; color: var(--muted); cursor: pointer; font-family: inherit;
+  }
+
+  #adminPanel {
+    display: none; margin: 0 16px 28px;
+    background: #fff; border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 20px;
+  }
+  #adminPanel h3 { font-size: 15px; color: var(--dark); margin-bottom: 14px; }
+  .stats { display: flex; gap: 10px; margin-bottom: 16px; }
+  .stat-box { flex: 1; text-align: center; background: var(--light); border-radius: 10px; padding: 12px 6px; }
+  .stat-box .num { font-size: 26px; font-weight: 700; color: var(--dark); }
+  .stat-box .lbl { font-size: 10px; color: var(--muted); }
+  .export-btn {
+    width: 100%; padding: 11px; background: #e67e22; color: #fff;
+    border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit; margin-bottom: 10px;
+  }
+  .clear-btn {
+    width: 100%; padding: 10px; background: none;
+    border: 1.5px solid var(--red); color: var(--red);
+    border-radius: 10px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+  #responseList { margin-top: 14px; max-height: 320px; overflow-y: auto; }
+  .rc {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; margin-bottom: 10px;
+    font-size: 12.5px; line-height: 1.7; background: var(--bg);
+  }
+  .rc strong { color: var(--dark); }
+  .rc .ts { font-size: 11px; color: var(--muted); float: right; }
+
+  .footer { text-align: center; padding: 0 16px 24px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:44px">🚰</div>
+  <h1>पानी की शिकायत</h1>
+  <p>Colony Complaint — SDM को भेजने हेतु</p>
+</div>
+
+<div class="card" id="formCard">
+
+  <!-- PERSONAL INFO -->
+  <p class="sec-title">👤 आपकी जानकारी</p>
+
+  <div class="field">
+    <label>पूरा नाम <span class="req">*</span></label>
+    <input type="text" id="f_name" placeholder="जैसे: Rajesh Kumar">
+  </div>
+
+  <div class="field">
+    <label>मोबाइल नंबर <span class="req">*</span></label>
+    <input type="tel" id="f_phone" placeholder="10-digit number" maxlength="10" inputmode="numeric">
+  </div>
+
+  <div style="display:flex; gap:10px;">
+    <div class="field" style="flex:1">
+      <label>Sector <span class="req">*</span></label>
+      <select id="f_sector">
+        <option value="">-- चुनें --</option>
+        <option value="2B">Sector 2B</option>
+        <option value="2C">Sector 2C</option>
+      </select>
+    </div>
+    <div class="field" style="flex:1">
+      <label>House No. <span class="req">*</span></label>
+      <input type="number" id="f_house" placeholder="जैसे: 123" min="1" max="9999" inputmode="numeric">
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PROBLEM -->
+  <p class="sec-title">💧 क्या समस्या है?</p>
+
+  <div class="field">
+    <label>समस्या चुनें <span class="req">*</span> <small style="color:var(--muted);font-weight:400">(एक या ज़्यादा)</small></label>
+    <div class="chip-group">
+      <label class="chip" onclick="toggleChip(this)">
+        <input type="checkbox" name="issue" value="कम पानी आना">
+        <span class="emoji">💦</span>
+        <div><div class="txt">कम पानी आना</div><div class="sub">Low / No Water Supply</div></div>
+      </label>
+      <label class="chip" onclick="toggleChip(this)">
+        <input type="checkbox" name="issue" value="बदबूदार पानी">
+        <span class="emoji">🤢</span>
+        <div><div class="txt">बदबूदार पानी</div><div class="sub">Foul / Bad Smell in Water</div></div>
+      </label>
+      <label class="chip" onclick="toggleChip(this)">
+        <input type="checkbox" name="issue" value="गंदा / मटमैला पानी">
+        <span class="emoji">🟤</span>
+        <div><div class="txt">गंदा / मटमैला पानी</div><div class="sub">Dirty / Muddy Water</div></div>
+      </label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>समस्या कितनी गंभीर है? <span class="req">*</span></label>
+    <div class="sev-row">
+      <div class="sev-btn" onclick="selectSev(this,'हल्की')">😐<span>हल्की</span></div>
+      <div class="sev-btn" onclick="selectSev(this,'मध्यम')">😟<span>मध्यम</span></div>
+      <div class="sev-btn" onclick="selectSev(this,'गंभीर')">😠<span>गंभीर</span></div>
+      <div class="sev-btn" onclick="selectSev(this,'बहुत गंभीर')">🤢<span>बहुत गंभीर</span></div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>समस्या कब से है? (आमस्या) <span class="req">*</span></label>
+    <select id="f_since">
+      <option value="">-- चुनें --</option>
+      <option value="1 हफ्ते से">1 हफ्ते से</option>
+      <option value="1 महीने से">1 महीने से</option>
+      <option value="2-3 महीने से">2–3 महीने से</option>
+      <option value="6 महीने से">6 महीने से</option>
+      <option value="1 साल से ज़्यादा">1 साल से ज़्यादा (1+ Year)</option>
+    </select>
+  </div>
+
+  <button class="submit-btn" onclick="submitForm()">✉️ शिकायत दर्ज करें</button>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="big">✅</div>
+  <h2>शिकायत दर्ज हो गई!</h2>
+  <p>आपकी शिकायत सफलतापूर्वक दर्ज की गई है।<br>
+  Colony coordinator इसे SDM कार्यालय को भेजेंगे।</p>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-toggle">
+  <button onclick="toggleAdmin()">🔒 Coordinator View</button>
+</div>
+<div id="adminPanel">
+  <h3>📋 Coordinator Dashboard</h3>
+  <div class="stats">
+    <div class="stat-box"><div class="num" id="totalCount">0</div><div class="lbl">कुल शिकायतें</div></div>
+    <div class="stat-box"><div class="num" id="sevCount">0</div><div class="lbl">गंभीर / बहुत गंभीर</div></div>
+    <div class="stat-box"><div class="num" id="badbuCount">0</div><div class="lbl">बदबूदार पानी</div></div>
+  </div>
+  <button class="export-btn" onclick="exportCSV()">📥 Export CSV for SDM</button>
+  <button class="clear-btn" onclick="clearData()">🗑️ सब हटाएं (Export पहले करें)</button>
+  <div id="responseList"></div>
+</div>
+
+<div class="footer">
+  🏛️ यह फॉर्म केवल SDM शिकायत हेतु है।<br>
+  जल बोर्ड हेल्पलाइन: <strong>1916</strong>
+</div>
+
+<script>
+  let severity = null;
+
+  function toggleChip(el) {
+    const cb = el.querySelector('input[type="checkbox"]');
+    cb.checked = !cb.checked;
+    el.classList.toggle('active', cb.checked);
+  }
+
+  function selectSev(el, val) {
+    document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    severity = val;
+  }
+
+  function getIssues() {
+    return [...document.querySelectorAll('input[name="issue"]:checked')].map(i => i.value).join(', ');
+  }
+
+  function err(id, msg) {
+    const el = document.getElementById(id);
+    if (el) { el.style.borderColor = 'var(--red)'; setTimeout(() => el.style.borderColor = '', 2000); }
+    alert(msg); return false;
+  }
+
+  async function submitForm() {
+    const name   = document.getElementById('f_name').value.trim();
+    const phone  = document.getElementById('f_phone').value.trim();
+    const sector = document.getElementById('f_sector').value;
+    const house  = document.getElementById('f_house').value.trim();
+    const since  = document.getElementById('f_since').value;
+    const issues = getIssues();
+
+    if (!name)   return err('f_name',   'कृपया नाम भरें।');
+    if (!/^\d{10}$/.test(phone)) return err('f_phone', 'कृपया सही 10-अंकीय मोबाइल नंबर डालें।');
+    if (!sector) return err('f_sector', 'कृपया Sector चुनें।');
+    if (!house || isNaN(house) || house < 1 || house > 9999)
+      return err('f_house', 'House No. 1–9999 के बीच होना चाहिए।');
+    if (!issues)  { alert('कृपया कम से कम एक समस्या चुनें।'); return; }
+    if (!severity){ alert('कृपया गंभीरता चुनें।'); return; }
+    if (!since)   return err('f_since', 'कृपया बताएं समस्या कब से है।');
+
+    const btn = document.querySelector('.submit-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ दर्ज हो रही है...';
+
+    const data = {
+      data: {
+        Timestamp:   new Date().toLocaleString('en-IN'),
+        Name:        name,
+        Mobile:      phone,
+        Sector:      sector,
+        "House No":  house,
+        Issues:      issues,
+        Severity:    severity,
+        "Since When": since
+      }
+    };
+
+    try {
+      const res = await fetch('https://sheetdb.io/api/v1/6zxrzclrqc5ze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('API error');
+      document.getElementById('formCard').style.display = 'none';
+      const s = document.getElementById('successScreen');
+      s.style.display = 'block';
+      s.scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = '✉️ शिकायत दर्ज करें';
+      alert('❌ कुछ गड़बड़ हुई। Internet check करें और दोबारा try करें।');
+    }
+  }
+
+  function toggleAdmin() {
+    const p = document.getElementById('adminPanel');
+    if (p.style.display === 'block') { p.style.display = 'none'; return; }
+    loadAdmin(); p.style.display = 'block'; p.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function loadAdmin() {
+    const all = JSON.parse(localStorage.getItem('pani_complaints') || '[]');
+    document.getElementById('totalCount').textContent = all.length;
+    document.getElementById('sevCount').textContent   = all.filter(e => e.severity === 'गंभीर' || e.severity === 'बहुत गंभीर').length;
+    document.getElementById('badbuCount').textContent = all.filter(e => e.issues.includes('बदबूदार')).length;
+
+    const list = document.getElementById('responseList');
+    list.innerHTML = all.length
+      ? ''
+      : '<p style="text-align:center;color:var(--muted);padding:16px;font-size:13px">कोई शिकायत नहीं</p>';
+
+    [...all].reverse().forEach(e => {
+      list.innerHTML += `<div class="rc">
+        <span class="ts">${e.ts}</span>
+        <strong>${e.name}</strong> — ${e.phone}<br>
+        📍 ${e.address}<br>
+        ⚠️ ${e.issues}<br>
+        🔴 गंभीरता: ${e.severity} &nbsp;|&nbsp; 📅 ${e.since}
+      </div>`;
+    });
+  }
+
+  function exportCSV() {
+    const all = JSON.parse(localStorage.getItem('pani_complaints') || '[]');
+    if (!all.length) { alert('कोई शिकायत नहीं है।'); return; }
+    const headers = ['दिनांक','नाम','मोबाइल','Sector','House No.','पता','समस्याएं','गंभीरता','कब से'];
+    const rows = all.map(e =>
+      [e.ts, e.name, e.phone, e.sector, e.house, e.address, e.issues, e.severity, e.since]
+      .map(v => `"${(v||'').replace(/"/g,'""')}"`).join(',')
+    );
+    const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    a.download = `pani_shikayat_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  }
+
+  function clearData() {
+    if (confirm('सभी शिकायतें हटा दी जाएंगी!\nपहले Export CSV कर लें।')) {
+      localStorage.removeItem('pani_complaints'); loadAdmin();
+    }
+  }
+</script>
+</body>
+</html>
