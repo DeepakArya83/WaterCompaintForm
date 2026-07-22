@@ -88,24 +88,27 @@
   }
 
   /* Big toggle chips for problem type */
-  .chip-group { display: flex; flex-direction: column; gap: 10px; }
+  .chip-group { display: flex; flex-direction: column; gap: 12px; }
   .chip {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 13px 14px;
-    border: 2px solid var(--border);
-    border-radius: 12px;
+    gap: 14px;
+    padding: 16px 16px;
+    border: 2.5px solid var(--border);
+    border-radius: 14px;
     cursor: pointer;
     background: var(--bg);
     transition: all 0.15s;
+    user-select: none;
   }
   .chip input[type="checkbox"] { display: none; }
-  .chip .emoji { font-size: 26px; }
-  .chip .txt { font-size: 14px; font-weight: 600; }
-  .chip .sub { font-size: 12px; color: var(--muted); font-weight: 400; }
+  .chip .emoji { font-size: 32px; flex-shrink: 0; }
+  .chip .txt { font-size: 16px; font-weight: 700; }
+  .chip .sub { font-size: 12px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+  .chip .tick { font-size: 20px; color: var(--border); flex-shrink: 0; transition: all 0.15s; }
   .chip.active { border-color: var(--blue); background: var(--light); }
   .chip.active .txt { color: var(--dark); }
+  .chip.active .tick { color: var(--blue); }
 
   /* Severity */
   .sev-row { display: flex; gap: 8px; }
@@ -146,42 +149,7 @@
   .success-screen h2 { font-size: 20px; color: var(--green); margin-bottom: 8px; }
   .success-screen p { font-size: 13.5px; color: #2c7a4b; line-height: 1.6; }
 
-  .admin-toggle { text-align: center; padding: 10px 16px 16px; }
-  .admin-toggle button {
-    background: none; border: 1.5px solid var(--border);
-    border-radius: 8px; padding: 8px 18px;
-    font-size: 12px; color: var(--muted); cursor: pointer; font-family: inherit;
-  }
 
-  #adminPanel {
-    display: none; margin: 0 16px 28px;
-    background: #fff; border: 1.5px solid var(--border);
-    border-radius: 16px; padding: 20px;
-  }
-  #adminPanel h3 { font-size: 15px; color: var(--dark); margin-bottom: 14px; }
-  .stats { display: flex; gap: 10px; margin-bottom: 16px; }
-  .stat-box { flex: 1; text-align: center; background: var(--light); border-radius: 10px; padding: 12px 6px; }
-  .stat-box .num { font-size: 26px; font-weight: 700; color: var(--dark); }
-  .stat-box .lbl { font-size: 10px; color: var(--muted); }
-  .export-btn {
-    width: 100%; padding: 11px; background: #e67e22; color: #fff;
-    border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
-    cursor: pointer; font-family: inherit; margin-bottom: 10px;
-  }
-  .clear-btn {
-    width: 100%; padding: 10px; background: none;
-    border: 1.5px solid var(--red); color: var(--red);
-    border-radius: 10px; font-size: 13px; font-weight: 600;
-    cursor: pointer; font-family: inherit;
-  }
-  #responseList { margin-top: 14px; max-height: 320px; overflow-y: auto; }
-  .rc {
-    border: 1px solid var(--border); border-radius: 10px;
-    padding: 12px; margin-bottom: 10px;
-    font-size: 12.5px; line-height: 1.7; background: var(--bg);
-  }
-  .rc strong { color: var(--dark); }
-  .rc .ts { font-size: 11px; color: var(--muted); float: right; }
 
   .footer { text-align: center; padding: 0 16px 24px; font-size: 12px; color: var(--muted); line-height: 1.6; }
 </style>
@@ -191,7 +159,7 @@
 <div class="header">
   <div style="font-size:44px">🚰</div>
   <h1>पानी की शिकायत</h1>
-  <p>Colony Complaint — SDM को भेजने हेतु</p>
+  <p>Colony Complaint for Sector 2B/2C</p>
 </div>
 
 <div class="card" id="formCard">
@@ -230,22 +198,26 @@
   <p class="sec-title">💧 क्या समस्या है?</p>
 
   <div class="field">
-    <label>समस्या चुनें <span class="req">*</span> <small style="color:var(--muted);font-weight:400">(एक या ज़्यादा)</small></label>
+    <label style="font-size:17px;font-weight:700">अपनी समस्या चुनें <span class="req">*</span></label>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:10px;font-weight:500">👇 नीचे दिए options में से टैप करके चुनें — एक से ज़्यादा भी चुन सकते हैं</p>
     <div class="chip-group">
       <label class="chip" onclick="toggleChip(this)">
         <input type="checkbox" name="issue" value="कम पानी आना">
         <span class="emoji">💦</span>
-        <div><div class="txt">कम पानी आना</div><div class="sub">Low / No Water Supply</div></div>
+        <div style="flex:1"><div class="txt">कम पानी आना</div><div class="sub">Low / No Water Supply</div></div>
+        <span class="tick">✔</span>
       </label>
       <label class="chip" onclick="toggleChip(this)">
         <input type="checkbox" name="issue" value="बदबूदार पानी">
         <span class="emoji">🤢</span>
-        <div><div class="txt">बदबूदार पानी</div><div class="sub">Foul / Bad Smell in Water</div></div>
+        <div style="flex:1"><div class="txt">बदबूदार पानी</div><div class="sub">Foul / Bad Smell in Water</div></div>
+        <span class="tick">✔</span>
       </label>
       <label class="chip" onclick="toggleChip(this)">
         <input type="checkbox" name="issue" value="गंदा / मटमैला पानी">
         <span class="emoji">🟤</span>
-        <div><div class="txt">गंदा / मटमैला पानी</div><div class="sub">Dirty / Muddy Water</div></div>
+        <div style="flex:1"><div class="txt">गंदा / मटमैला पानी</div><div class="sub">Dirty / Muddy Water</div></div>
+        <span class="tick">✔</span>
       </label>
     </div>
   </div>
@@ -261,7 +233,7 @@
   </div>
 
   <div class="field">
-    <label>समस्या कब से है? (आमस्या) <span class="req">*</span></label>
+    <label>समस्या कब से है? <span class="req">*</span></label>
     <select id="f_since">
       <option value="">-- चुनें --</option>
       <option value="1 हफ्ते से">1 हफ्ते से</option>
@@ -283,25 +255,9 @@
   Colony coordinator इसे SDM कार्यालय को भेजेंगे।</p>
 </div>
 
-<!-- ADMIN -->
-<div class="admin-toggle">
-  <button onclick="toggleAdmin()">🔒 Coordinator View</button>
-</div>
-<div id="adminPanel">
-  <h3>📋 Coordinator Dashboard</h3>
-  <div class="stats">
-    <div class="stat-box"><div class="num" id="totalCount">0</div><div class="lbl">कुल शिकायतें</div></div>
-    <div class="stat-box"><div class="num" id="sevCount">0</div><div class="lbl">गंभीर / बहुत गंभीर</div></div>
-    <div class="stat-box"><div class="num" id="badbuCount">0</div><div class="lbl">बदबूदार पानी</div></div>
-  </div>
-  <button class="export-btn" onclick="exportCSV()">📥 Export CSV for SDM</button>
-  <button class="clear-btn" onclick="clearData()">🗑️ सब हटाएं (Export पहले करें)</button>
-  <div id="responseList"></div>
-</div>
 
 <div class="footer">
-  🏛️ यह फॉर्म केवल SDM शिकायत हेतु है।<br>
-  जल बोर्ड हेल्पलाइन: <strong>1916</strong>
+  🏛️ यह फॉर्म केवल शिकायत collection हेतु है।<br>
 </div>
 
 <script>
@@ -381,54 +337,6 @@
     }
   }
 
-  function toggleAdmin() {
-    const p = document.getElementById('adminPanel');
-    if (p.style.display === 'block') { p.style.display = 'none'; return; }
-    loadAdmin(); p.style.display = 'block'; p.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  function loadAdmin() {
-    const all = JSON.parse(localStorage.getItem('pani_complaints') || '[]');
-    document.getElementById('totalCount').textContent = all.length;
-    document.getElementById('sevCount').textContent   = all.filter(e => e.severity === 'गंभीर' || e.severity === 'बहुत गंभीर').length;
-    document.getElementById('badbuCount').textContent = all.filter(e => e.issues.includes('बदबूदार')).length;
-
-    const list = document.getElementById('responseList');
-    list.innerHTML = all.length
-      ? ''
-      : '<p style="text-align:center;color:var(--muted);padding:16px;font-size:13px">कोई शिकायत नहीं</p>';
-
-    [...all].reverse().forEach(e => {
-      list.innerHTML += `<div class="rc">
-        <span class="ts">${e.ts}</span>
-        <strong>${e.name}</strong> — ${e.phone}<br>
-        📍 ${e.address}<br>
-        ⚠️ ${e.issues}<br>
-        🔴 गंभीरता: ${e.severity} &nbsp;|&nbsp; 📅 ${e.since}
-      </div>`;
-    });
-  }
-
-  function exportCSV() {
-    const all = JSON.parse(localStorage.getItem('pani_complaints') || '[]');
-    if (!all.length) { alert('कोई शिकायत नहीं है।'); return; }
-    const headers = ['दिनांक','नाम','मोबाइल','Sector','House No.','पता','समस्याएं','गंभीरता','कब से'];
-    const rows = all.map(e =>
-      [e.ts, e.name, e.phone, e.sector, e.house, e.address, e.issues, e.severity, e.since]
-      .map(v => `"${(v||'').replace(/"/g,'""')}"`).join(',')
-    );
-    const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-    a.download = `pani_shikayat_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-  }
-
-  function clearData() {
-    if (confirm('सभी शिकायतें हटा दी जाएंगी!\nपहले Export CSV कर लें।')) {
-      localStorage.removeItem('pani_complaints'); loadAdmin();
-    }
-  }
 </script>
 </body>
 </html>
